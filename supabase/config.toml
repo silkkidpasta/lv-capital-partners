@@ -1,0 +1,72 @@
+# Supabase Local Development Configuration
+# Copy this to your local Supabase project for development
+# For production, these settings should be configured directly in the Supabase dashboard
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 15
+
+[studio]
+enabled = true
+port = 54323
+api_url = "http://localhost:54321"
+
+[inbucket]
+enabled = true
+port = 54324
+smtp_port = 54325
+pop3_port = 54326
+
+[storage]
+enabled = true
+port = 54327
+file_size_limit = "50MiB"
+image_transformation = true
+
+[auth]
+enabled = true
+port = 54328
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["https://lvcapitalpartners.com", "https://www.lvcapitalpartners.com"]
+jwt_expiry = 3600
+refresh_token_rotation_enabled = true
+security_refresh_token_reuse_interval = 10
+security_captcha_enabled = false
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = true
+secure_password_change = true
+
+[auth.external.clerk]
+enabled = true
+client_id = "env(CLERK_PUBLISHABLE_KEY)"
+secret = "env(CLERK_SECRET_KEY)"
+
+[realtime]
+enabled = true
+port = 54329
+max_concurrent_users = 200
+
+[functions]
+enabled = true
+verify_jwt = true
+
+[analytics]
+enabled = true
+port = 54330
+
+# Production Security Settings
+[security]
+cors_origins = ["http://localhost:3000", "https://lvcapitalpartners.com", "https://www.lvcapitalpartners.com"]
+rate_limit_enabled = true
+rate_limit_per_minute = 60
