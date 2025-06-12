@@ -215,12 +215,12 @@ export function AdvancedSearch({
     // Filter by amount range
     if (filters.minAmount !== null) {
       results = results.filter(
-        (investment) => investment.amount >= filters.minAmount!,
+        (investment) => investment.amount >= (filters.minAmount ?? 0),
       );
     }
     if (filters.maxAmount !== null) {
       results = results.filter(
-        (investment) => investment.amount <= filters.maxAmount!,
+        (investment) => investment.amount <= (filters.maxAmount ?? Number.MAX_VALUE),
       );
     }
 
@@ -246,9 +246,9 @@ export function AdvancedSearch({
     if (filters.dateRange?.from) {
       results = results.filter((investment) => {
         const investmentDate = investment.date;
-        const from = filters.dateRange?.from!;
+        const from = filters.dateRange?.from;
         const to = filters.dateRange?.to || new Date();
-        return investmentDate >= from && investmentDate <= to;
+        return from && investmentDate >= from && investmentDate <= to;
       });
     }
 

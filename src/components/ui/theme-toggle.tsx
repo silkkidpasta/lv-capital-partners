@@ -86,7 +86,7 @@ export function ThemeToggle() {
       mediaQuery.addEventListener("change", handleChange);
       return () => mediaQuery.removeEventListener("change", handleChange);
     }
-  }, [theme]); // applyTheme is stable and doesn't need to be in dependency
+  }, [theme, applyTheme]);
 
   if (!mounted) {
     return (

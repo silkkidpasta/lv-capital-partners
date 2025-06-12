@@ -6,10 +6,7 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  experimental: {
-    skipTrailingSlashRedirect: true,
-  },
-  // Skip pre-rendering for dynamic routes during build
+  // Skip trailing slash redirects
   skipTrailingSlashRedirect: true,
   images: {
     unoptimized: true,

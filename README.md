@@ -55,6 +55,7 @@ A sophisticated real estate investment platform designed for high-net-worth indi
 - A Supabase account
 - A Clerk account
 - A Resend account (for emails)
+- A Vercel account (for deployment)
 
 ### Installation
 
@@ -210,9 +211,28 @@ lv-capital-partners/
 
 ## 🚀 Deployment
 
-### Netlify Deployment
+### Vercel Deployment (Recommended)
 
-The project is configured for automatic deployment to Netlify via GitHub Actions.
+The project is optimized for deployment on Vercel. See the [Vercel Deployment Guide](VERCEL_DEPLOYMENT.md) for detailed instructions.
+
+#### Quick Deploy to Vercel
+
+1. **Push to GitHub**
+   ```bash
+   git add .
+   git commit -m "Deploy to Vercel"
+   git push origin main
+   ```
+
+2. **Connect to Vercel**
+   - Go to [vercel.com/dashboard](https://vercel.com/dashboard)
+   - Import your GitHub repository
+   - Configure environment variables (see guide)
+   - Deploy!
+
+### Netlify Deployment (Alternative)
+
+The project also supports deployment to Netlify via GitHub Actions.
 
 #### Manual Deployment
 

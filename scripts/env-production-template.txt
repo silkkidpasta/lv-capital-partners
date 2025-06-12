@@ -1,0 +1,65 @@
+# LV Capital Partners - Production Environment Variables
+# Copy these to your Vercel dashboard under "Environment Variables"
+# Generate secure keys with: node scripts/generate-env-keys.js
+
+# ============================================================================
+# AUTHENTICATION - Clerk (Required)
+# ============================================================================
+# Get these from: https://dashboard.clerk.com/last-active?path=api-keys
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_live_your_actual_publishable_key_here
+CLERK_SECRET_KEY=sk_live_your_actual_secret_key_here
+
+# Webhook secret (set up after Vercel deployment)
+# Get from Clerk webhook configuration
+CLERK_WEBHOOK_SECRET=whsec_your_webhook_secret_here
+
+# ============================================================================
+# DATABASE - Supabase (Required)
+# ============================================================================
+# Get these from: https://supabase.com/dashboard -> Settings -> API
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_public_key_here
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_secret_key_here
+
+# ============================================================================
+# EMAIL - Resend (Required)
+# ============================================================================
+# Get from: https://resend.com/api-keys
+RESEND_API_KEY=re_your_resend_api_key_here
+RESEND_FROM_EMAIL=noreply@yourdomain.com
+
+# ============================================================================
+# APPLICATION URLS (Auto-set by Vercel)
+# ============================================================================
+# These will be automatically set by Vercel, update after deployment
+NEXT_PUBLIC_APP_URL=https://your-project.vercel.app
+NEXT_PUBLIC_API_URL=https://your-project.vercel.app/api
+
+# ============================================================================
+# SECURITY KEYS (Generate new ones for production)
+# ============================================================================
+# Run: node scripts/generate-env-keys.js to generate secure keys
+NEXTAUTH_SECRET=your_32_character_secure_random_string_here
+ENCRYPTION_KEY=your_32_character_encryption_key_here
+JWT_SECRET=your_32_character_jwt_secret_here
+HASH_SALT=your_16_character_hash_salt_here
+
+# ============================================================================
+# ANALYTICS - Google Analytics (Optional)
+# ============================================================================
+# Get from: https://analytics.google.com -> Admin -> Data Streams
+NEXT_PUBLIC_GA_TRACKING_ID=G-XXXXXXXXXX
+
+# ============================================================================
+# DEPLOYMENT NOTES
+# ============================================================================
+#
+# 1. NEVER commit actual production keys to Git
+# 2. Set these in Vercel dashboard: Project Settings -> Environment Variables
+# 3. Set all variables for "Production", "Preview", and "Development" environments
+# 4. After setting variables, redeploy the application
+# 5. Test all functionality after deployment
+#
+# For detailed setup instructions, see:
+# - VERCEL_DEPLOYMENT.md
+# - scripts/deploy-checklist.md

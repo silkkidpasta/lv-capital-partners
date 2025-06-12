@@ -6,10 +6,58 @@ import { pdf } from "@react-pdf/renderer";
 import { Download, FileText, Loader2 } from "lucide-react";
 import { useState } from "react";
 
+// Type definitions for better type safety
+interface Investment {
+  id: string;
+  name?: string;
+  invested?: number;
+  currentValue?: number;
+  returnPercent?: number;
+  status?: string;
+  [key: string]: unknown;
+}
+
+interface UserType {
+  id: string;
+  first_name?: string;
+  last_name?: string;
+  firstName?: string;
+  lastName?: string;
+  [key: string]: unknown;
+}
+
+interface InvestmentType {
+  id: string;
+  title?: string;
+  property_type?: string;
+  location?: string;
+  asset_class?: string;
+  [key: string]: unknown;
+}
+
+interface PortfolioType {
+  investments: Investment[];
+  portfolioSummary: {
+    totalInvested?: number;
+    currentValue?: number;
+    totalReturn?: number;
+    returnPercent?: number;
+    [key: string]: unknown;
+  };
+}
+
+interface QuarterlyType {
+  quarter: string;
+  year: number;
+  portfolioData: {
+    [key: string]: unknown;
+  };
+}
+
 interface PDFDownloadProps {
   type: "investment" | "portfolio" | "quarterly";
-  data: Record<string, unknown>;
-  user?: Record<string, unknown>;
+  data: InvestmentType | PortfolioType | QuarterlyType | Record<string, unknown>;
+  user?: UserType | Record<string, unknown>;
   fileName: string;
   title?: string;
   variant?: "default" | "outline" | "ghost";
@@ -36,20 +84,22 @@ export function PDFDownload({
       let pdfComponent: React.ReactElement;
       switch (type) {
         case "investment":
-          pdfComponent = generateInvestmentReport(data as any, user as any);
+          pdfComponent = generateInvestmentReport(data as InvestmentType, user as UserType);
           break;
         case "portfolio":
+          const portfolioData = data as PortfolioType;
           pdfComponent = generatePortfolioReport(
-            user as any,
-            (data as any).investments,
-            (data as any).portfolioSummary,
+            user as UserType,
+            portfolioData.investments || [],
+            portfolioData.portfolioSummary || {},
           );
           break;
         case "quarterly":
+          const quarterlyData = data as QuarterlyType;
           pdfComponent = generateQuarterlyReport(
-            (data as any).quarter,
-            (data as any).year,
-            (data as any).portfolioData,
+            quarterlyData.quarter || "Q1",
+            quarterlyData.year || new Date().getFullYear(),
+            quarterlyData.portfolioData || {},
           );
           break;
         default:
@@ -117,20 +167,22 @@ export function PDFPreviewLink({
       let pdfComponent: React.ReactElement;
       switch (type) {
         case "investment":
-          pdfComponent = generateInvestmentReport(data as any, user as any);
+          pdfComponent = generateInvestmentReport(data as InvestmentType, user as UserType);
           break;
         case "portfolio":
+          const portfolioData = data as PortfolioType;
           pdfComponent = generatePortfolioReport(
-            user as any,
-            (data as any).investments,
-            (data as any).portfolioSummary,
+            user as UserType,
+            portfolioData.investments || [],
+            portfolioData.portfolioSummary || {},
           );
           break;
         case "quarterly":
+          const quarterlyData = data as QuarterlyType;
           pdfComponent = generateQuarterlyReport(
-            (data as any).quarter,
-            (data as any).year,
-            (data as any).portfolioData,
+            quarterlyData.quarter || "Q1",
+            quarterlyData.year || new Date().getFullYear(),
+            quarterlyData.portfolioData || {},
           );
           break;
         default:
