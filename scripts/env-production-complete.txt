@@ -1,0 +1,271 @@
+# ============================================================================
+# LV Capital Partners - Complete Production Environment Variables
+# ============================================================================
+# This template contains ALL environment variables needed for production
+# Copy these to your Vercel dashboard under "Environment Variables"
+# 
+# IMPORTANT SETUP STEPS:
+# 1. Generate secure keys: node scripts/generate-env-keys.js
+# 2. Set up external services (Clerk, Supabase, Resend)
+# 3. Add these variables to Vercel for Production, Preview, and Development
+# 4. Update placeholder values with your actual service credentials
+# ============================================================================
+
+# ============================================================================
+# AUTHENTICATION - Clerk (Required)
+# ============================================================================
+# Get these from: https://dashboard.clerk.com -> API Keys
+# IMPORTANT: Use 'live' keys for production, 'test' keys for development
+
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+CLERK_SECRET_KEY=sk_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# Clerk URL configuration (keep these values as-is)
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
+
+# Webhook secret (configure AFTER Vercel deployment)
+# Get from Clerk dashboard -> Webhooks -> [Your webhook] -> Signing Secret
+CLERK_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# ============================================================================
+# DATABASE - Supabase (Required)
+# ============================================================================
+# Get these from: https://supabase.com/dashboard -> Settings -> API
+
+# Project URL (format: https://your-project-id.supabase.co)
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+
+# Anon public key (safe to expose on frontend)
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# Service role key (KEEP SECRET - server-side only)
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# ============================================================================
+# EMAIL - Resend (Required)
+# ============================================================================
+# Get from: https://resend.com/api-keys
+
+# Resend API key
+RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# From email address (must be verified domain or use resend.dev)
+RESEND_FROM_EMAIL=noreply@yourdomain.com
+# Alternative for testing: RESEND_FROM_EMAIL=onboarding@resend.dev
+
+# ============================================================================
+# APPLICATION URLS (Update after deployment)
+# ============================================================================
+# These should match your actual deployment URL
+
+# Main application URL (no trailing slash)
+NEXT_PUBLIC_APP_URL=https://your-project.vercel.app
+
+# API base URL (no trailing slash)
+NEXT_PUBLIC_API_URL=https://your-project.vercel.app/api
+
+# Node environment
+NODE_ENV=production
+
+# ============================================================================
+# SECURITY KEYS (Generate unique values for production)
+# ============================================================================
+# Run: node scripts/generate-env-keys.js to generate these
+# NEVER use the same keys across multiple environments
+
+# NextAuth secret (32 characters)
+NEXTAUTH_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# Encryption key for sensitive data (32 characters)
+ENCRYPTION_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# JWT secret for API tokens (32 characters)
+JWT_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# Hash salt for password hashing (16 characters)
+HASH_SALT=xxxxxxxxxxxxxxxx
+
+# ============================================================================
+# ANALYTICS - Google Analytics (Optional)
+# ============================================================================
+# Get from: https://analytics.google.com -> Admin -> Data Streams -> Measurement ID
+
+# Google Analytics tracking ID
+NEXT_PUBLIC_GA_TRACKING_ID=G-XXXXXXXXXX
+
+# Enable/disable analytics
+NEXT_PUBLIC_GOOGLE_ANALYTICS=true
+
+# ============================================================================
+# PAYMENTS - Stripe (Optional - if implementing payment features)
+# ============================================================================
+# Get from: https://dashboard.stripe.com/apikeys
+
+# Stripe publishable key (safe for frontend)
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# Stripe secret key (server-side only)
+STRIPE_SECRET_KEY=sk_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# Stripe webhook secret (for webhook verification)
+STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# ============================================================================
+# FILE STORAGE - Supabase Storage (Optional)
+# ============================================================================
+# For document uploads and file management
+
+# Storage bucket name
+NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET=documents
+
+# ============================================================================
+# EXTERNAL APIS (Optional integrations)
+# ============================================================================
+
+# DocuSign Integration (for document signing)
+DOCUSIGN_INTEGRATION_KEY=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+DOCUSIGN_USER_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+
+# Calendly Integration (for scheduling meetings)
+CALENDLY_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# ============================================================================
+# MONITORING & ERROR TRACKING (Optional but recommended)
+# ============================================================================
+
+# Sentry DSN for error tracking
+SENTRY_DSN=https://xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx@sentry.io/xxxxxxx
+
+# Enable/disable error tracking
+NEXT_PUBLIC_SENTRY_ENABLED=true
+
+# ============================================================================
+# DEVELOPMENT TOOLS (Optional)
+# ============================================================================
+
+# Vercel deployment URL (auto-set by Vercel)
+NEXT_PUBLIC_VERCEL_URL=your-project.vercel.app
+
+# Bundle analyzer (set to 'true' to analyze bundle size)
+ANALYZE=false
+
+# Debug mode for development
+DEBUG=false
+
+# ============================================================================
+# RATE LIMITING (Optional)
+# ============================================================================
+
+# Redis URL for rate limiting (if using Redis)
+REDIS_URL=redis://localhost:6379
+
+# Rate limit settings
+RATE_LIMIT_MAX=100
+RATE_LIMIT_WINDOW=900000
+
+# ============================================================================
+# BACKUP & SYNC (Optional)
+# ============================================================================
+
+# AWS S3 for backups (if implemented)
+AWS_ACCESS_KEY_ID=AKIAXXXXXXXXXXXXXXXX
+AWS_SECRET_ACCESS_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+AWS_REGION=us-east-1
+AWS_S3_BUCKET=lv-capital-backups
+
+# ============================================================================
+# FEATURE FLAGS (Optional)
+# ============================================================================
+
+# Enable/disable specific features
+FEATURE_INVESTMENT_CALCULATOR=true
+FEATURE_DOCUMENT_UPLOAD=true
+FEATURE_VIDEO_CALLS=false
+FEATURE_ADVANCED_ANALYTICS=true
+
+# ============================================================================
+# COMPLIANCE & LEGAL (Optional)
+# ============================================================================
+
+# Privacy policy and terms URLs
+NEXT_PUBLIC_PRIVACY_POLICY_URL=https://yourdomain.com/privacy
+NEXT_PUBLIC_TERMS_OF_SERVICE_URL=https://yourdomain.com/terms
+
+# Compliance mode (affects data handling)
+COMPLIANCE_MODE=gdpr
+
+# ============================================================================
+# DEPLOYMENT CONFIGURATION
+# ============================================================================
+
+# Build configuration
+BUILD_ENV=production
+SKIP_BUILD_STATIC_GENERATION=false
+
+# Next.js configuration
+NEXT_TELEMETRY_DISABLED=1
+
+# ============================================================================
+# SETUP CHECKLIST
+# ============================================================================
+#
+# Before going live, ensure:
+# 
+# ✅ SECURITY
+# - [ ] All placeholder values replaced with real credentials
+# - [ ] Security keys generated uniquely for production
+# - [ ] Service role keys kept secret (not exposed to frontend)
+# - [ ] HTTPS enforced everywhere
+# 
+# ✅ EXTERNAL SERVICES
+# - [ ] Clerk application configured and tested
+# - [ ] Supabase project created and database migrated
+# - [ ] Resend domain verified (or using resend.dev for testing)
+# - [ ] Google Analytics property created (if using)
+# 
+# ✅ DEPLOYMENT
+# - [ ] All variables added to Vercel environment
+# - [ ] Variables set for Production, Preview, and Development
+# - [ ] Application successfully deployed and accessible
+# - [ ] Webhooks configured and tested
+# 
+# ✅ TESTING
+# - [ ] User registration/login works
+# - [ ] Database connectivity confirmed
+# - [ ] Email notifications sending
+# - [ ] All core features functional
+# 
+# ✅ MONITORING
+# - [ ] Analytics tracking (if configured)
+# - [ ] Error tracking setup (if using Sentry)
+# - [ ] Performance monitoring enabled
+# 
+# ============================================================================
+# SECURITY REMINDERS
+# ============================================================================
+#
+# 🔒 NEVER commit this file with real values to version control
+# 🔒 Use different keys for production, staging, and development
+# 🔒 Regularly rotate API keys and secrets
+# 🔒 Monitor access logs for suspicious activity
+# 🔒 Keep service role keys and secret keys secure
+# 🔒 Use environment-specific Clerk applications
+#
+# ============================================================================
+# SUPPORT RESOURCES
+# ============================================================================
+#
+# 📚 Documentation:
+# - Vercel: https://vercel.com/docs/concepts/projects/environment-variables
+# - Clerk: https://clerk.com/docs/reference/environment-variables
+# - Supabase: https://supabase.com/docs/guides/getting-started/environment
+# - Resend: https://resend.com/docs/dashboard/api-keys
+#
+# 🆘 Support:
+# - GitHub Issues: [Your repository issues URL]
+# - Technical Support: tech@yourdomain.com
+#
+# ============================================================================
