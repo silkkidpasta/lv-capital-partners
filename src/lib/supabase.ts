@@ -38,6 +38,12 @@ export function createServiceClient(): SupabaseClient {
   });
 }
 
+// Convenience object for modules that expect a "db" export.
+// Provides a ready-to-use service role client under `db.supabase`.
+export const db = {
+  supabase: createServiceClient(),
+};
+
 // Server-side Supabase client with Clerk user authentication
 export async function createAuthenticatedClient(): Promise<SupabaseClient | null> {
   try {
