@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout code 
         uses: actions/checkout@v4
 
       - name: Setup Bun
@@ -44,6 +44,21 @@ jobs:
       - name: Type check
         run: bunx tsc --noEmit
 
+- name: Install Playwright OS dependencies
+          run: |
+            sudo apt-get update
+            sudo apt-get install -y \
+              libgtk-3-0 libgbm1 libnotify-dev libgconf-2-4 \
+              libnss3 libxss1 libasound2 libxtst6 xdg-utils
+
+        - name: Install Playwright browsers & deps
+          run: npx playwright install --with-deps
+
+        - name: Run unit tests
+          run: bun run test
+
+        - name: Run E2E tests
+          run: bun run test:e2e
   build:
     name: Build Application
     runs-on: ubuntu-latest
