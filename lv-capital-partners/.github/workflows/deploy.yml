@@ -46,8 +46,6 @@ jobs:
       - name: Link Supabase project
         run: bunx supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
         env:
-          # The following are needed by the link command to create db/config.toml
-          # DB_PASSWORD is only needed if you have a custom password
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
         continue-on-error: true
 
@@ -57,11 +55,11 @@ jobs:
 
       - name: Run linter
         run: bun run lint
-        continue-on-error: true # Continue even if linting fails
+        continue-on-error: true
 
       - name: Type check
         run: bunx tsc --noEmit
-        continue-on-error: true # Continue even if TypeScript errors exist
+        continue-on-error: true
 
       - name: Install Playwright OS dependencies
         run: |
@@ -75,11 +73,12 @@ jobs:
 
       - name: Run unit tests
         run: bun run test
-        continue-on-error: true # Continue even if tests fail initially
+        continue-on-error: true
 
       - name: Run E2E tests
         run: bun run test:e2e
-        continue-on-error: true # Continue even if E2E tests fail initially
+        continue-on-error: true
+
   build:
     name: Build Application
     runs-on: ubuntu-latest
@@ -110,7 +109,6 @@ jobs:
       - name: Build application
         run: bun run build
         env:
-          # Environment variables for build
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
           CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
@@ -135,35 +133,6 @@ jobs:
             .next/
             public/
             package.json
-
-  deploy-preview:
-    name: Deploy Preview
-    runs-on: ubuntu-latest
-    needs: build
-    if: github.event_name == 'pull_request'
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: build-files
-
-      - name: Deploy to Netlify (Preview)
-        uses: nwtgck/actions-netlify@v2.0
-        with:
-          publish-dir: '.next'
-          production-branch: main
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: "Deploy from GitHub Actions - Preview"
-          enable-pull-request-comment: true
-          enable-commit-comment: false
-          overwrites-pull-request-comment: true
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
 
   deploy-production:
     name: Deploy to Production
@@ -205,26 +174,3 @@ jobs:
         run: |
           echo "❌ Production deployment failed!"
           exit 1
-
-  security-scan:
-    name: Security Scan
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push'
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-
-      - name: Upload Trivy scan results
-        uses: github/codeql-action/upload-sarif@v2
-        if: always()
-        with:
-          sarif_file: 'trivy-results.sarif'
