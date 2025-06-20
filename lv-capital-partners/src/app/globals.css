@@ -1,0 +1,177 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* LV Capital Partners - Legacy Vault Inspired Modern Palette */
+    --background: 210 20% 97%;  /* Light gray background #f8fafb */
+    --foreground: 243 38% 15%;  /* Deep navy text #27225e */
+    --card: 0 0% 100%;          /* Pure white cards */
+    --card-foreground: 243 38% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 243 38% 15%;
+
+    /* Primary: Deep Navy Purple */
+    --primary: 243 38% 15%;     /* #27225e */
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary: Bright Gold */
+    --secondary: 50 85% 60%;    /* #f3c835 */
+    --secondary-foreground: 243 38% 15%;
+
+    /* Muted: Light Gray */
+    --muted: 231 14% 63%;       /* #9797ae */
+    --muted-foreground: 243 38% 15%;
+
+    /* Accent: Green */
+    --accent: 152 44% 44%;      /* #3aa576 */
+    --accent-foreground: 0 0% 100%;
+
+    /* Additional Legacy Vault colors */
+    --vault-gray: 314 14% 46%;  /* #836c7a */
+    --vault-light: 239 20% 78%; /* #cbccdb */
+    --vault-gold-light: 53 74% 76%; /* #efda97 */
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 231 14% 78%;      /* Light purple-gray borders */
+    --input: 210 20% 94%;
+    --ring: 243 38% 15%;
+
+    /* Investment-specific colors */
+    --growth: 152 44% 44%;
+    --yield: 50 85% 60%;
+    --risk-low: 152 44% 44%;
+    --risk-medium: 50 85% 60%;
+    --risk-high: 0 70% 50%;
+
+    --radius: 0.75rem;
+    --chart-1: 243 38% 15%;
+    --chart-2: 50 85% 60%;
+    --chart-3: 152 44% 44%;
+    --chart-4: 231 14% 63%;
+    --chart-5: 314 14% 46%;
+  }
+
+  .dark {
+    --background: 243 35% 8%;   /* Dark navy background */
+    --foreground: 210 20% 95%;  /* Light text */
+    --card: 243 30% 12%;        /* Darker navy cards */
+    --card-foreground: 210 20% 95%;
+    --popover: 243 30% 12%;
+    --popover-foreground: 210 20% 95%;
+    --primary: 50 85% 60%;      /* Bright gold primary in dark mode */
+    --primary-foreground: 243 38% 15%;
+    --secondary: 243 25% 18%;   /* Dark navy secondary */
+    --secondary-foreground: 210 20% 95%;
+    --muted: 243 20% 18%;       /* Dark muted */
+    --muted-foreground: 231 14% 65%;
+    --accent: 152 44% 54%;      /* Brighter green in dark mode */
+    --accent-foreground: 243 38% 15%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 243 20% 20%;      /* Dark borders */
+    --input: 243 20% 20%;
+    --ring: 50 85% 60%;         /* Gold ring in dark mode */
+    --chart-1: 50 85% 60%;
+    --chart-2: 152 44% 54%;
+    --chart-3: 231 14% 65%;
+    --chart-4: 314 14% 56%;
+    --chart-5: 243 25% 25%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  /* Typography System */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+    @apply text-foreground;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight tracking-tight;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl font-semibold leading-tight tracking-tight;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl font-medium leading-snug;
+  }
+
+  h4 {
+    @apply text-xl md:text-2xl font-medium leading-snug;
+  }
+
+  /* Luxury gradient backgrounds */
+  .gradient-navy-gold {
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(45, 30%, 85%) 100%);
+  }
+
+  .gradient-emerald-navy {
+    background: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(var(--primary)) 100%);
+  }
+
+  /* Glass morphism effects */
+  .glass {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .glass-dark {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Luxury animations */
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.8s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary));
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--accent));
+  }
+}

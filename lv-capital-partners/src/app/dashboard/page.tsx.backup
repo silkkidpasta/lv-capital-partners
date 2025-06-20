@@ -1,0 +1,593 @@
+'use client'
+
+import { useState } from 'react'
+import { Header } from '@/components/navigation/header'
+import { useUser } from '@clerk/nextjs'
+import { PDFDownload, PDFPreviewLink } from '@/components/ui/pdf-download'
+import { PortfolioAnalytics } from '@/components/dashboard/portfolio-analytics'
+import { AdvancedSearch } from '@/components/dashboard/advanced-search'
+import { ExportReports } from '@/components/dashboard/export-reports'
+import { useAnalytics } from '@/components/providers/analytics-provider'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Progress } from '@/components/ui/progress'
+import {
+  TrendingUp,
+  DollarSign,
+  Building,
+  Target,
+  ArrowUpRight,
+  Download,
+  Eye,
+  FileText,
+  CheckCircle,
+  Activity,
+  AlertCircle,
+  BarChart3
+} from 'lucide-react'
+
+// Mock data for the dashboard
+const portfolioSummary = {
+  totalInvested: 850000,
+  currentValue: 1235000,
+  totalReturn: 385000,
+  returnPercent: 45.3,
+  monthlyChange: 8.2,
+  activeInvestments: 6,
+  totalDistributions: 125000
+}
+
+const activeInvestments = [
+  {
+    id: 1,
+    name: "Manhattan Luxury Tower",
+    type: "Residential Development",
+    invested: 250000,
+    currentValue: 335000,
+    returnPercent: 34.0,
+    status: "Active",
+    nextDistribution: "Q1 2025",
+    riskLevel: "Medium"
+  },
+  {
+    id: 2,
+    name: "Austin Tech Campus",
+    type: "Commercial Office",
+    invested: 150000,
+    currentValue: 195000,
+    returnPercent: 30.0,
+    status: "Active",
+    nextDistribution: "Q4 2024",
+    riskLevel: "Low"
+  },
+  {
+    id: 3,
+    name: "Miami Mixed-Use Development",
+    type: "Mixed-Use",
+    invested: 100000,
+    currentValue: 118000,
+    returnPercent: 18.0,
+    status: "Development",
+    nextDistribution: "Q2 2025",
+    riskLevel: "Medium-High"
+  },
+  {
+    id: 4,
+    name: "Denver Industrial Portfolio",
+    type: "Industrial",
+    invested: 200000,
+    currentValue: 285000,
+    returnPercent: 42.5,
+    status: "Active",
+    nextDistribution: "Q1 2025",
+    riskLevel: "Low"
+  }
+]
+
+const documents = [
+  {
+    id: 1,
+    name: "Q3 2024 Portfolio Report",
+    type: "Quarterly Report",
+    date: "2024-10-15",
+    size: "2.4 MB",
+    category: "Performance"
+  },
+  {
+    id: 2,
+    name: "Manhattan Tower - Investment Summary",
+    type: "Investment Memo",
+    date: "2024-09-28",
+    size: "1.8 MB",
+    category: "Deal Documents"
+  },
+  {
+    id: 3,
+    name: "Tax Documents 2024",
+    type: "Tax Statement",
+    date: "2024-01-31",
+    size: "856 KB",
+    category: "Tax & Legal"
+  },
+  {
+    id: 4,
+    name: "Austin Campus - Distribution Notice",
+    type: "Distribution",
+    date: "2024-11-01",
+    size: "645 KB",
+    category: "Distributions"
+  }
+]
+
+const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount)
+}
+
+const formatPercent = (percent: number) => {
+  return `${percent >= 0 ? '+' : ''}${percent.toFixed(1)}%`
+}
+
+const getRiskColor = (risk: string) => {
+  switch (risk) {
+    case 'Low': return 'text-green-600 bg-green-50 border-green-200'
+    case 'Medium': return 'text-yellow-600 bg-yellow-50 border-yellow-200'
+    case 'Medium-High': return 'text-orange-600 bg-orange-50 border-orange-200'
+    case 'High': return 'text-red-600 bg-red-50 border-red-200'
+    default: return 'text-gray-600 bg-gray-50 border-gray-200'
+  }
+}
+
+export default function DashboardPage() {
+  const [selectedTab, setSelectedTab] = useState('overview')
+  const { user, isLoaded } = useUser()
+  const { trackEvent } = useAnalytics()
+
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary" />
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+
+      {/* Modern Dashboard Header */}
+      <section className="pt-32 pb-8 bg-gradient-to-b from-vault-background to-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-2 h-2 bg-emerald rounded-full animate-pulse" />
+                <span className="text-sm font-medium text-vault-muted uppercase tracking-wider">Live Portfolio</span>
+              </div>
+              <h1 className="font-serif text-4xl md:text-5xl font-bold text-vault-primary mb-2">
+                Welcome back, {user?.firstName || 'Investor'}
+              </h1>
+              <p className="text-xl text-vault-muted">
+                Real-time portfolio insights and performance analytics
+              </p>
+            </div>
+
+            <div className="flex gap-3 mt-4 md:mt-0">
+              <PDFDownload
+                type="portfolio"
+                data={{
+                  investments: activeInvestments,
+                  portfolioSummary
+                }}
+                user={{
+                  firstName: user?.firstName,
+                  lastName: user?.lastName,
+                  email: user?.emailAddresses?.[0]?.emailAddress
+                }}
+                fileName={`lv-capital-portfolio-${new Date().toISOString().split('T')[0]}`}
+                title="Export Portfolio"
+                variant="outline"
+                className="border-vault-light text-vault-primary hover:bg-vault-light/20"
+              />
+              <Button className="bg-vault-primary text-white hover:bg-vault-primary/90 shadow-lg">
+                <Eye className="w-4 h-4 mr-2" />
+                View Opportunities
+              </Button>
+            </div>
+          </div>
+
+          {/* Modern Key Metrics Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-8 h-8 bg-gradient-to-br from-vault-secondary to-vault-gold-light rounded-lg flex items-center justify-center">
+                        <DollarSign className="w-4 h-4 text-vault-primary" />
+                      </div>
+                      <p className="text-sm font-medium text-vault-muted uppercase tracking-wider">Portfolio Value</p>
+                    </div>
+                    <p className="text-3xl font-bold text-vault-primary mb-2">
+                      {formatCurrency(portfolioSummary.currentValue)}
+                    </p>
+                    <div className="flex items-center gap-1">
+                      <ArrowUpRight className="w-4 h-4 text-vault-accent" />
+                      <p className="text-sm font-medium text-vault-accent">
+                        {formatPercent(portfolioSummary.monthlyChange)} this month
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-8 h-8 bg-gradient-to-br from-vault-accent to-emerald-500 rounded-lg flex items-center justify-center">
+                        <TrendingUp className="w-4 h-4 text-white" />
+                      </div>
+                      <p className="text-sm font-medium text-vault-muted uppercase tracking-wider">Total Return</p>
+                    </div>
+                    <p className="text-3xl font-bold text-vault-primary mb-2">
+                      {formatCurrency(portfolioSummary.totalReturn)}
+                    </p>
+                    <div className="flex items-center gap-1">
+                      <TrendingUp className="w-4 h-4 text-vault-accent" />
+                      <p className="text-sm font-medium text-vault-accent">
+                        {formatPercent(portfolioSummary.returnPercent)} IRR
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-8 h-8 bg-gradient-to-br from-vault-primary to-navy-light rounded-lg flex items-center justify-center">
+                        <Building className="w-4 h-4 text-white" />
+                      </div>
+                      <p className="text-sm font-medium text-vault-muted uppercase tracking-wider">Active Deals</p>
+                    </div>
+                    <p className="text-3xl font-bold text-vault-primary mb-2">
+                      {portfolioSummary.activeInvestments}
+                    </p>
+                    <p className="text-sm text-vault-muted">
+                      Across multiple markets
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-8 h-8 bg-gradient-to-br from-vault-gray to-vault-light rounded-lg flex items-center justify-center">
+                        <Target className="w-4 h-4 text-vault-primary" />
+                      </div>
+                      <p className="text-sm font-medium text-vault-muted uppercase tracking-wider">Distributions</p>
+                    </div>
+                    <p className="text-3xl font-bold text-vault-primary mb-2">
+                      {formatCurrency(portfolioSummary.totalDistributions)}
+                    </p>
+                    <p className="text-sm text-vault-muted">
+                      Year to date
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Modern Dashboard Content */}
+      <section className="pb-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full">
+            <TabsList className="grid w-full max-w-3xl mx-auto grid-cols-4 bg-white/60 backdrop-blur-sm border border-vault-light/50 shadow-lg mb-8 rounded-xl p-1">
+              <TabsTrigger
+                value="overview"
+                className="data-[state=active]:bg-vault-primary data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-200 rounded-lg font-medium"
+              >
+                Overview
+              </TabsTrigger>
+              <TabsTrigger
+                value="analytics"
+                className="data-[state=active]:bg-vault-primary data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-200 rounded-lg font-medium"
+              >
+                Analytics
+              </TabsTrigger>
+              <TabsTrigger
+                value="investments"
+                className="data-[state=active]:bg-vault-primary data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-200 rounded-lg font-medium"
+              >
+                Investments
+              </TabsTrigger>
+              <TabsTrigger
+                value="documents"
+                className="data-[state=active]:bg-vault-primary data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-200 rounded-lg font-medium"
+              >
+                Documents
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Modern Overview Tab */}
+            <TabsContent value="overview" className="space-y-8">
+              <div className="grid lg:grid-cols-2 gap-8">
+                {/* Portfolio Performance */}
+                <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+                  <CardHeader className="pb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-vault-secondary to-vault-gold-light rounded-xl flex items-center justify-center">
+                        <BarChart3 className="w-5 h-5 text-vault-primary" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-vault-primary">Portfolio Performance</CardTitle>
+                        <CardDescription className="text-vault-muted">Investment performance by asset class</CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-6">
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center">
+                          <span className="text-vault-primary font-medium">Residential Development</span>
+                          <span className="font-bold text-vault-accent">+34.2%</span>
+                        </div>
+                        <Progress value={85} className="h-3 bg-vault-light/30" />
+                      </div>
+
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center">
+                          <span className="text-vault-primary font-medium">Commercial Office</span>
+                          <span className="font-bold text-vault-accent">+28.7%</span>
+                        </div>
+                        <Progress value={70} className="h-3 bg-vault-light/30" />
+                      </div>
+
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center">
+                          <span className="text-vault-primary font-medium">Mixed-Use Projects</span>
+                          <span className="font-bold text-vault-accent">+19.2%</span>
+                        </div>
+                        <Progress value={60} className="h-3 bg-vault-light/30" />
+                      </div>
+
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center">
+                          <span className="text-vault-primary font-medium">Industrial/Logistics</span>
+                          <span className="font-bold text-vault-accent">+42.5%</span>
+                        </div>
+                        <Progress value={95} className="h-3 bg-vault-light/30" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Recent Activity */}
+                <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+                  <CardHeader className="pb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-vault-accent to-emerald-500 rounded-xl flex items-center justify-center">
+                        <Activity className="w-5 h-5 text-white" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-vault-primary">Recent Activity</CardTitle>
+                        <CardDescription className="text-vault-muted">Latest portfolio updates and transactions</CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-vault-accent/10 to-vault-accent/5 rounded-xl border border-vault-accent/20">
+                        <div className="w-10 h-10 bg-vault-accent rounded-xl flex items-center justify-center">
+                          <CheckCircle className="w-5 h-5 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-semibold text-vault-primary">Distribution Received</p>
+                          <p className="text-sm text-vault-muted">Austin Tech Campus - $12,500</p>
+                        </div>
+                        <span className="text-sm text-vault-muted font-medium">2 days ago</span>
+                      </div>
+
+                      <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-vault-secondary/10 to-vault-secondary/5 rounded-xl border border-vault-secondary/20">
+                        <div className="w-10 h-10 bg-vault-secondary rounded-xl flex items-center justify-center">
+                          <Activity className="w-5 h-5 text-vault-primary" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-semibold text-vault-primary">Portfolio Update</p>
+                          <p className="text-sm text-vault-muted">Q3 valuation report available</p>
+                        </div>
+                        <span className="text-sm text-vault-muted font-medium">1 week ago</span>
+                      </div>
+
+                      <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-vault-primary/10 to-vault-primary/5 rounded-xl border border-vault-primary/20">
+                        <div className="w-10 h-10 bg-vault-primary rounded-xl flex items-center justify-center">
+                          <FileText className="w-5 h-5 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-semibold text-vault-primary">New Investment</p>
+                          <p className="text-sm text-vault-muted">Seattle Waterfront committed</p>
+                        </div>
+                        <span className="text-sm text-vault-muted font-medium">2 weeks ago</span>
+                      </div>
+
+                      <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-orange-100/50 to-orange-50/50 rounded-xl border border-orange-200/50">
+                        <div className="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center">
+                          <AlertCircle className="w-5 h-5 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-semibold text-vault-primary">Action Required</p>
+                          <p className="text-sm text-vault-muted">Tax documents ready for review</p>
+                        </div>
+                        <span className="text-sm text-vault-muted font-medium">3 weeks ago</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            {/* Analytics Tab */}
+            <TabsContent value="analytics" className="space-y-6">
+              <PortfolioAnalytics />
+            </TabsContent>
+
+            {/* Investments Tab */}
+            <TabsContent value="investments" className="space-y-6">
+              <AdvancedSearch />
+
+              <div className="grid gap-6">
+                {activeInvestments.map((investment) => (
+                  <Card key={investment.id} className="hover:shadow-lg transition-shadow">
+                    <CardContent className="p-6">
+                      <div className="flex flex-col lg:flex-row justify-between gap-6">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-4">
+                            <h3 className="font-serif text-xl font-semibold">{investment.name}</h3>
+                            <Badge variant="outline">{investment.type}</Badge>
+                            <Badge
+                              variant="outline"
+                              className={getRiskColor(investment.riskLevel)}
+                            >
+                              {investment.riskLevel} Risk
+                            </Badge>
+                          </div>
+
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div>
+                              <p className="text-sm text-muted-foreground">Invested</p>
+                              <p className="font-semibold">{formatCurrency(investment.invested)}</p>
+                            </div>
+                            <div>
+                              <p className="text-sm text-muted-foreground">Current Value</p>
+                              <p className="font-semibold">{formatCurrency(investment.currentValue)}</p>
+                            </div>
+                            <div>
+                              <p className="text-sm text-muted-foreground">Return</p>
+                              <p className="font-semibold text-green-600">
+                                {formatPercent(investment.returnPercent)}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-sm text-muted-foreground">Next Distribution</p>
+                              <p className="font-semibold">{investment.nextDistribution}</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                          <Button variant="outline" size="sm">
+                            <FileText className="w-4 h-4 mr-2" />
+                            View Details
+                          </Button>
+                          <PDFDownload
+                            type="investment"
+                            data={investment}
+                            user={{
+                              firstName: user?.firstName,
+                              lastName: user?.lastName,
+                              email: user?.emailAddresses?.[0]?.emailAddress
+                            }}
+                            fileName={`${investment.name.toLowerCase().replace(/\s+/g, '-')}-report`}
+                            title="Download Report"
+                            variant="outline"
+                            size="sm"
+                          />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+
+            {/* Documents Tab */}
+            <TabsContent value="documents" className="space-y-6">
+              <div className="flex justify-between items-center">
+                <h3 className="font-serif text-2xl font-semibold">Document Library</h3>
+                <div className="flex gap-3">
+                  <ExportReports />
+                  <PDFDownload
+                    type="quarterly"
+                    data={{
+                      quarter: "Q4 2024",
+                      year: 2024,
+                      portfolioData: {
+                        portfolioSummary,
+                        investments: activeInvestments
+                      }
+                    }}
+                    user={{
+                      firstName: user?.firstName,
+                      lastName: user?.lastName,
+                      email: user?.emailAddresses?.[0]?.emailAddress
+                    }}
+                    fileName={`lv-capital-quarterly-q4-2024`}
+                    title="Q4 2024 Report"
+                    variant="outline"
+                  />
+                  <Button variant="outline">
+                    <Download className="w-4 h-4 mr-2" />
+                    Download All
+                  </Button>
+                </div>
+              </div>
+
+              <div className="grid gap-4">
+                {documents.map((doc) => (
+                  <Card key={doc.id} className="hover:shadow-md transition-shadow">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className="p-3 bg-muted rounded-lg">
+                            <FileText className="w-6 h-6 text-muted-foreground" />
+                          </div>
+                          <div>
+                            <h4 className="font-semibold">{doc.name}</h4>
+                            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                              <span>{doc.type}</span>
+                              <span>{doc.date}</span>
+                              <span>{doc.size}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline">{doc.category}</Badge>
+                          <Button variant="ghost" size="sm">
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm">
+                            <Download className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </section>
+    </div>
+  )
+}
